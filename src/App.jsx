@@ -154,7 +154,28 @@ function StartScreen() {
           className="pointer-events-none absolute h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(232,224,210,0.78),transparent_70%)] blur-3xl"
         />
 
-        <ProductStartButton />
+        <div className="relative z-10 flex min-h-screen w-full -translate-y-[3vh] flex-col items-center justify-center px-6 text-center">
+          <h1
+            className="intro-reveal max-w-[900px] font-[Georgia,'Times_New_Roman',serif] text-[2.5rem] font-normal leading-[1.05] tracking-[-0.04em] text-[#1F1F1D] sm:text-[3.25rem] lg:text-[4rem]"
+            style={{ animationDelay: "0ms" }}
+          >
+            A calmer way to understand the market.
+          </h1>
+
+          <p
+            className="intro-reveal mt-6 max-w-[680px] text-base font-normal leading-[1.7] text-[#6F6A60] sm:text-[1.25rem]"
+            style={{ animationDelay: "120ms" }}
+          >
+            Seven specialized agents turn scattered signals into thoughtful equity research.
+          </p>
+
+          <div
+            className="intro-reveal mt-[42px]"
+            style={{ animationDelay: "240ms" }}
+          >
+            <ProductStartButton />
+          </div>
+        </div>
       </section>
     </main>
   );
