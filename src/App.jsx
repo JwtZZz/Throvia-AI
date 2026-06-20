@@ -1,3 +1,6 @@
+import { useEffect, useRef, useState } from "react";
+
+import ResearchDashboard from "@/components/ResearchDashboard";
 import { RippleButton } from "@/components/ui/ripple-button";
 
 const variantPositions = {
@@ -43,6 +46,13 @@ const dotPlacements = [
   { bottom: "14%", right: "1.5%", size: 18, color: "#e0d84d", duration: "15s", delay: "-11s", floatDistance: "7px" },
 ];
 
+const flowerExitClasses = [
+  "flower-corner flower-top-left",
+  "flower-corner flower-top-right",
+  "flower-corner flower-bottom-left",
+  "flower-corner flower-bottom-right",
+];
+
 function AvocadoFlowerSprite({ variant, size, className = "", style = {} }) {
   return (
     <div
@@ -67,57 +77,72 @@ function FloatingFlowerBackground() {
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden [contain:layout_paint_style]">
       {flowerPlacements.map((flower, index) => (
-        <AvocadoFlowerSprite
+        <div
           key={`flower-${index}`}
-          variant={flower.variant}
-          size={flower.size}
-          className={`absolute will-change-transform ${flower.motion} ${flower.hideOnMobile ? "hidden md:block" : "block"}`}
+          aria-hidden="true"
+          className={`flower-exit-wrapper absolute will-change-transform ${index < 4 ? flowerExitClasses[index] : "flower-small"} ${flower.hideOnMobile ? "hidden md:block" : "block"}`}
           style={{
             top: flower.top,
             right: flower.right,
             bottom: flower.bottom,
             left: flower.left,
             opacity: flower.opacity,
-            "--rotate": `${flower.rotate}deg`,
-            "--duration": flower.duration,
-            "--delay": flower.delay,
-            "--float-distance": flower.floatDistance,
           }}
-        />
+        >
+          <AvocadoFlowerSprite
+            variant={flower.variant}
+            size={flower.size}
+            className={`flower-float ${flower.motion}`}
+            style={{
+              "--rotate": `${flower.rotate}deg`,
+              "--duration": flower.duration,
+              "--delay": flower.delay,
+              "--float-distance": flower.floatDistance,
+            }}
+          />
+        </div>
       ))}
 
       {dotPlacements.map((dot, index) => (
-        <span
+        <div
           key={`dot-${index}`}
           aria-hidden="true"
-          className={`absolute rounded-full will-change-transform floating-dot ${dot.hideOnMobile ? "hidden md:block" : "block"}`}
+          className={`flower-exit-wrapper flower-dot absolute will-change-transform ${dot.hideOnMobile ? "hidden md:block" : "block"}`}
           style={{
             top: dot.top,
             right: dot.right,
             bottom: dot.bottom,
             left: dot.left,
-            width: dot.size,
-            height: dot.size,
-            backgroundColor: dot.color,
             opacity: 0.78,
-            "--duration": dot.duration,
-            "--delay": dot.delay,
-            "--float-distance": dot.floatDistance,
           }}
-        />
+        >
+          <span
+            className="dot-float floating-dot block rounded-full"
+            style={{
+              width: dot.size,
+              height: dot.size,
+              backgroundColor: dot.color,
+              "--duration": dot.duration,
+              "--delay": dot.delay,
+              "--float-distance": dot.floatDistance,
+            }}
+          />
+        </div>
       ))}
     </div>
   );
 }
 
-function ProductStartButton() {
+function ProductStartButton({ onClick, isLeaving }) {
   return (
-    <div className="group relative z-20">
+    <div className={`start-cta group relative z-20 ${isLeaving ? "is-leaving" : ""}`}>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-10 -bottom-3 h-10 rounded-full bg-[#b76e3e]/20 blur-2xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-100"
       />
       <RippleButton
+        type="button"
+        onClick={onClick}
         rippleColor="rgba(255,255,255,0.4)"
         duration="900ms"
         className="group relative inline-flex h-16 min-w-[13.5rem] items-center justify-center overflow-hidden rounded-[1.45rem] border border-[#d6a082]/25 px-12 text-[1.05rem] font-semibold tracking-[0.01em] text-white outline-none transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_24px_48px_rgba(168,95,43,0.24),inset_0_1px_0_rgba(255,255,255,0.25)] active:translate-y-0 active:scale-[0.985] focus-visible:ring-4 focus-visible:ring-[#d6b195]/30 before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:bg-[radial-gradient(circle_at_50%_0%,rgba(255,250,245,0.2),transparent_56%)] after:pointer-events-none after:absolute after:-left-[35%] after:top-0 after:h-full after:w-[24%] after:-skew-x-[22deg] after:bg-gradient-to-r after:from-transparent after:via-white/30 after:to-transparent after:transition-transform after:duration-700 after:ease-[cubic-bezier(0.22,1,0.36,1)] hover:after:translate-x-[560%]"
@@ -139,9 +164,9 @@ function ProductStartButton() {
   );
 }
 
-function StartScreen() {
+function StartScreen({ onStart, isLeaving }) {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#F8F5ED] font-body">
+    <main className={`start-screen relative min-h-screen overflow-hidden bg-[#F8F5ED] font-body ${isLeaving ? "leaving" : ""}`}>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(234,227,213,0.45),transparent_52%)]"
@@ -154,7 +179,7 @@ function StartScreen() {
           className="pointer-events-none absolute h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(232,224,210,0.78),transparent_70%)] blur-3xl"
         />
 
-        <div className="relative z-10 flex min-h-screen w-full -translate-y-[3vh] flex-col items-center justify-center px-6 text-center">
+        <div className="start-content relative z-10 flex min-h-screen w-full -translate-y-[3vh] flex-col items-center justify-center px-6 text-center">
           <h1
             className="intro-reveal max-w-[900px] font-[Georgia,'Times_New_Roman',serif] text-[2.5rem] font-normal leading-[1.05] tracking-[-0.04em] text-[#1F1F1D] sm:text-[3.25rem] lg:text-[4rem]"
             style={{ animationDelay: "0ms" }}
@@ -173,7 +198,7 @@ function StartScreen() {
             className="intro-reveal mt-[42px]"
             style={{ animationDelay: "240ms" }}
           >
-            <ProductStartButton />
+            <ProductStartButton onClick={onStart} isLeaving={isLeaving} />
           </div>
         </div>
       </section>
@@ -182,5 +207,42 @@ function StartScreen() {
 }
 
 export default function App() {
-  return <StartScreen />;
+  const [isLeavingStart, setIsLeavingStart] = useState(false);
+  const [screen, setScreen] = useState("start");
+  const transitionTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (transitionTimerRef.current !== null) {
+        window.clearTimeout(transitionTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleStart = () => {
+    if (isLeavingStart) {
+      return;
+    }
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) {
+      setScreen("dashboard");
+      return;
+    }
+
+    setIsLeavingStart(true);
+    transitionTimerRef.current = window.setTimeout(() => {
+      setScreen("dashboard");
+    }, 850);
+  };
+
+  if (screen === "dashboard") {
+    return <ResearchDashboard className="dashboard-enter" />;
+  }
+
+  return <StartScreen onStart={handleStart} isLeaving={isLeavingStart} />;
 }

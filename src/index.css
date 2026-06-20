@@ -83,6 +83,67 @@ body {
   }
 }
 
+@keyframes flowerExitTopLeft {
+  to {
+    opacity: 0;
+    transform: translate3d(-80px, -80px, 0) rotate(-18deg) scale(0.88);
+  }
+}
+
+@keyframes flowerExitTopRight {
+  to {
+    opacity: 0;
+    transform: translate3d(80px, -80px, 0) rotate(18deg) scale(0.88);
+  }
+}
+
+@keyframes flowerExitBottomLeft {
+  to {
+    opacity: 0;
+    transform: translate3d(-80px, 80px, 0) rotate(18deg) scale(0.88);
+  }
+}
+
+@keyframes flowerExitBottomRight {
+  to {
+    opacity: 0;
+    transform: translate3d(80px, 80px, 0) rotate(-18deg) scale(0.88);
+  }
+}
+
+@keyframes softParticleFade {
+  to {
+    opacity: 0;
+    transform: translate3d(0, -16px, 0) scale(1.08);
+  }
+}
+
+@keyframes dashboardEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.992);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes chatDotPulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.28;
+    transform: translate3d(0, 0, 0) scale(0.92);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translate3d(0, -1px, 0) scale(1);
+  }
+}
+
 @layer utilities {
   .animate-rippling {
     animation: rippling var(--duration) ease-out;
@@ -108,6 +169,93 @@ body {
     animation: intro-reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
     will-change: transform, opacity;
   }
+
+  .start-screen {
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      opacity 850ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 850ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .start-screen.leaving {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+
+  .start-content {
+    transition:
+      opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity;
+  }
+
+  .start-screen.leaving .start-content {
+    opacity: 0;
+    transform: translate3d(0, -18px, 0) scale(0.98);
+    transition:
+      opacity 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .start-cta {
+    transition:
+      opacity 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .start-screen.leaving .start-cta {
+    transform: scale(0.98);
+  }
+
+  .flower-exit-wrapper {
+    transition:
+      opacity 680ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 780ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity;
+  }
+
+  .flower-float,
+  .dot-float {
+    will-change: transform, opacity;
+  }
+
+  .dashboard-enter {
+    animation: dashboardEnter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .chat-dot {
+    animation: chatDotPulse 900ms ease-in-out infinite;
+  }
+
+  .chat-dot:nth-child(2) {
+    animation-delay: 120ms;
+  }
+
+  .chat-dot:nth-child(3) {
+    animation-delay: 240ms;
+  }
+}
+
+.start-screen.leaving .flower-top-left {
+  animation: flowerExitTopLeft 780ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.start-screen.leaving .flower-top-right {
+  animation: flowerExitTopRight 780ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.start-screen.leaving .flower-bottom-left {
+  animation: flowerExitBottomLeft 780ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.start-screen.leaving .flower-bottom-right {
+  animation: flowerExitBottomRight 780ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.start-screen.leaving .flower-small,
+.start-screen.leaving .flower-dot {
+  animation: softParticleFade 680ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @media (max-width: 768px) {
@@ -116,6 +264,22 @@ body {
   .floating-dot {
     --motion-scale: 0.6;
   }
+
+  .start-screen.leaving .flower-top-left {
+    animation: flowerExitTopLeft 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .start-screen.leaving .flower-top-right {
+    animation: flowerExitTopRight 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .start-screen.leaving .flower-bottom-left {
+    animation: flowerExitBottomLeft 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .start-screen.leaving .flower-bottom-right {
+    animation: flowerExitBottomRight 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -123,14 +287,31 @@ body {
   .floating-flower,
   .breathing-flower,
   .floating-dot,
-  .intro-reveal {
+  .intro-reveal,
+  .start-screen,
+  .start-content,
+  .start-cta,
+  .flower-exit-wrapper,
+  .dashboard-enter {
     animation: none !important;
+    transition: none !important;
   }
 
   .floating-flower,
   .breathing-flower,
   .floating-dot,
-  .intro-reveal {
+  .intro-reveal,
+  .start-screen,
+  .start-content,
+  .start-cta,
+  .flower-exit-wrapper,
+  .dashboard-enter {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .chat-dot {
+    animation: none !important;
     opacity: 1 !important;
     transform: none !important;
   }
